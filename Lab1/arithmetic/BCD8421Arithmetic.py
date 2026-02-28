@@ -1,5 +1,6 @@
 class BCD8421Arithmetic:
     """Сложение чисел в 8421 BCD"""
+    BIT_4 = 4
 
     # Таблица 8421 BCD
     bcd_table = {

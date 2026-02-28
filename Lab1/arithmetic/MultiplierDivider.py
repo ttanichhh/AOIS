@@ -5,7 +5,7 @@ from Lab1.converters.IntConverter import IntConverter
 class MultiplierDivider:
     """Умножения и деления в прямом двоичном коде."""
 
-    frac_bits = 5  # 5 двоичных знаков после точки
+    FRAC_BITS = 5  # 5 двоичных знаков после точки
 
     def __init__(self):
         self.converter = IntConverter()
@@ -32,10 +32,10 @@ class MultiplierDivider:
     def format_fixed_point_binary(self, bits):
         sign = '-' if bits[0] == 1 else '+'
         mag = bits[1:]  # 31 бит
-        cut = len(mag) - self.frac_bits
+        cut = len(mag) - self.FRAC_BITS
         int_part = mag[:cut]
         frac_part = mag[cut:]
-        return f"{sign}{''.join(map(str, int_part))}.{''.join(map(str, frac_part))}"
+        return f"{''.join(map(str, int_part))}.{''.join(map(str, frac_part))}"
 
     # Перевод 5 двоичных дробных бит в 10-ое для проверки (ручной).
     def fixed_to_decimal(self, bits):
@@ -43,13 +43,13 @@ class MultiplierDivider:
 
         # целая часть
         int_value = 0
-        for i in range(1, self.bit_size - self.frac_bits):
+        for i in range(1, self.bit_size - self.FRAC_BITS):
             int_value = int_value * 2 + bits[i]
 
         # дробная часть
         frac_value = 0.0
         weight = 0.5
-        for i in range(self.bit_size - self.frac_bits, self.bit_size):
+        for i in range(self.bit_size - self.FRAC_BITS, self.bit_size):
             if bits[i] == 1:
                 frac_value += weight
             weight /= 2
@@ -187,7 +187,7 @@ class MultiplierDivider:
 
         # сдвиг числа a влево на 5 бит умножение на 2^5=32:
         # (добавляет места для дробной части, делит как обычные числа и вернет знак)
-        a_scaled = self.shift_left_mag(a, self.frac_bits) # делимое умножается на 32
+        a_scaled = self.shift_left_mag(a, self.FRAC_BITS) # делимое умножается на 32
 
         q_fixed, _ = self.div_restoring_mag(a_scaled, b)
         q_fixed[0] = sign

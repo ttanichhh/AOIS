@@ -1,5 +1,8 @@
 class FloatConverter:
     BIT_SIZE = 32
+    EXPON_AND_1 = 9
+    MANTISSA = 23
+    DIMENSION = 127
 
     def __init__(self, number=None):
         self.number = number
@@ -56,24 +59,24 @@ class FloatConverter:
                 i += 1
             mantissa_source = frac_bits[i+1:]
 
-        exponent = shift + 127
+        exponent = shift + self.DIMENSION
 
         # экспонента
-        exp_bits = [0]*8
+        exp_bits = [0]*(self.EXPON_AND_1-1)
         i = 7
         while exponent > 0 and i >= 0:
             exp_bits[i] = exponent % 2
             exponent //= 2
             i -= 1
 
-        bits[1:9] = exp_bits
+        bits[1:self.EXPON_AND_1] = exp_bits
 
         # мантисса
-        mantissa = mantissa_source[:23]
-        while len(mantissa) < 23:
+        mantissa = mantissa_source[:self.MANTISSA]
+        while len(mantissa) < self.MANTISSA:
             mantissa.append(0)
 
-        bits[9:] = mantissa
+        bits[self.EXPON_AND_1:] = mantissa
 
         return bits
 
@@ -84,12 +87,12 @@ class FloatConverter:
 
         # экспонента (raw)
         exponent_raw = 0
-        for i in range(1, 9):
+        for i in range(1, self.EXPON_AND_1):
             exponent_raw = exponent_raw * 2 + bits[i]
 
         # проверяем мантиссу на нули
         mantissa_all_zero = True
-        for i in range(9, 32):
+        for i in range(self.EXPON_AND_1, self.BIT_SIZE):
             if bits[i] == 1:
                 mantissa_all_zero = False
                 break
@@ -98,12 +101,12 @@ class FloatConverter:
         if exponent_raw == 0 and mantissa_all_zero:
             return 0.0
 
-        exponent = exponent_raw - 127
+        exponent = exponent_raw - self.DIMENSION
 
         # мантисса (начинается с 1.)
         mantissa = 1
         weight = 0.5
-        for i in range(9, 32):
+        for i in range(self.EXPON_AND_1, self.BIT_SIZE):
             if bits[i] == 1:
                 mantissa += weight
             weight /= 2
@@ -134,8 +137,8 @@ class FloatConverter:
         self.print_bits(self.ieee_bits)
 
         print("sign:", self.ieee_bits[0])
-        print("exponent:", "".join(map(str, self.ieee_bits[1:9])))
-        print("mantissa:", "".join(map(str, self.ieee_bits[9:])))
+        print("exponent:", "".join(map(str, self.ieee_bits[1:self.EXPON_AND_1])))
+        print("mantissa:", "".join(map(str, self.ieee_bits[self.EXPON_AND_1:])))
 
         print("\nОбратное преобразование:")
         print("Decimal:", self.decimal_value)

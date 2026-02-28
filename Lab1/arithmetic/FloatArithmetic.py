@@ -12,6 +12,9 @@ class FloatArithmetic:
         self.bit_size = self.converter.BIT_SIZE
         self.bias = 127
         self.mant_bits = 23
+        self.expon_bits_and_1 = 9
+        self.expon_bits = 8
+
 
     #  ВСПОМОГАТЕЛЬНОЕ
 
@@ -19,8 +22,8 @@ class FloatArithmetic:
         if title:
             print(title)
         print("sign:", bits[0])
-        print("exponent:", "".join(map(str, bits[1:9])))
-        print("mantissa:", "".join(map(str, bits[9:])))
+        print("exponent:", "".join(map(str, bits[1:self.expon_bits_and_1])))
+        print("mantissa:", "".join(map(str, bits[self.expon_bits_and_1:])))
 
     def _bits_to_int(self, bits):
         x = 0
@@ -39,8 +42,8 @@ class FloatArithmetic:
 
     def unpack(self, bits):
         sign = bits[0]
-        exp = self._bits_to_int(bits[1:9])
-        mant_field = bits[9:]
+        exp = self._bits_to_int(bits[1:self.expon_bits_and_1])
+        mant_field = bits[self.expon_bits_and_1:]
         mant = self._bits_to_int(mant_field)
 
         if exp == 0 and mant == 0:
@@ -57,13 +60,13 @@ class FloatArithmetic:
             return bits
 
         if exp >= 255:
-            bits[1:9] = [1] * 8
+            bits[1:self.expon_bits_and_1] = [1] * self.expon_bits
             return bits
 
-        bits[1:9] = self._int_to_bits(exp, 8)
+        bits[1:self.expon_bits_and_1] = self._int_to_bits(exp, self.expon_bits)
 
         mant_field = mant_24 - (1 << self.mant_bits)
-        bits[9:] = self._int_to_bits(mant_field, self.mant_bits)
+        bits[self.expon_bits_and_1:] = self._int_to_bits(mant_field, self.mant_bits)
         return bits
 
     def normalize(self, exp, mant_24):
@@ -144,7 +147,7 @@ class FloatArithmetic:
         if b_zero:
             bits = [0] * self.bit_size
             bits[0] = a_sign ^ b_sign
-            bits[1:9] = [1] * 8
+            bits[1:self.expon_bits_and_1] = [1] * self.expon_bits
             return bits
 
         if a_zero:
