@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# Virtual env
+venv/
+.env/
+
+# PyCharm
+.idea/
+
+# Tests & coverage
+htmlcov/
+.coverage
+.pytest_cache/
+
+# MacOS
+.DS_Store
+
+# VSCode
+.vscode/
