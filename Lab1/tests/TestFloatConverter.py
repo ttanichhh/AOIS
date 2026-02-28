@@ -1,3 +1,6 @@
+import unittest
+from Lab1.converters.FloatConverter import FloatConverter
+
 class TestFloatConverter(unittest.TestCase):
     def setUp(self):
         self.f = FloatConverter()
