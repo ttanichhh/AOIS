@@ -22,5 +22,3 @@ htmlcov/
 
 # VSCode
 .vscode/
-
-__pycache__/
